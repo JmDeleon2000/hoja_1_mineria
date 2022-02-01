@@ -1,0 +1,36 @@
+---
+title: "HDT1_Analisis Exploratorio"
+author: "Alejandro Alvarez"
+date: "1/28/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+Se cargan los datos del archivo movies.csv a una variable llamada movies utilizando la función read.csv
+```{r}
+peliculas <- read.csv("D:/Universidad/Semestre 8/Minería de Datos/Semana 03/movies.csv", stringsAsFactors = F)
+```
+
+Se crea un resumen del conjunto datos 
+```{r}
+summary(peliculas)
+```
+
+Se crea un conteo de columnas y observaciones (filas) del conjunto de datos
+```{r}
+#ncol count -> col variable
+col <- ncol(peliculas)
+#Print
+cat("El número de columnas para el conjunto de datos es de :", col)
+#nrow count -> row variable
+row <- nrow(peliculas)
+#Print
+cat("El número de observaciones para el conjunto de datos es de :", row)
+
+```
+
+
