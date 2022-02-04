@@ -4,8 +4,17 @@ author: "Alejandro Alvarez"
 date: "1/28/2022"
 output: html_document
 ---
+Se importa la libreria "dplyr" y "ggplot2" para realizar operaciones, modificaciones al set de datos y gráfico de los resultados, respectivamente.
+```{r}
+library("tidyverse")
+library("dplyr")
+library("ggplot2")
+library("httr")
+library("readr")
+```
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -33,4 +42,94 @@ cat("El número de observaciones para el conjunto de datos es de :", row)
 
 ```
 
+PREGUNTA #4.2
+¿Cuáles son las 10 películas que más ingresos tuvieron?\n
+Se filtra con la librería dplyr el set de datos y se obtienen las 10 películas con mayor recaudación
+```{r}
+revenue <- arrange(peliculas, desc(peliculas$revenue))
+head (select(revenue, "originalTitle", "revenue"),10)
+```
+
+PREGUNTA #4.5
+¿Cuántas películas se hicieron en cada año? 
+```{r}
+# Format date conversion from "%Y-%m-%d" to POSIX %Y%
+peliculas$releaseYear <- as.POSIXct(peliculas$releaseDate, format ="%Y-%m-%d")
+peliculas$releaseYear <-format(peliculas$releaseYear, format = "%Y")
+
+# Format date column to integer for further study
+peliculas$releaseYear <-as.integer(peliculas$releaseYear, format ="%Y")
+
+# Group Movies by year and count incidences per year
+yearly <- peliculas %>% group_by(peliculas$releaseYear) %>% summarise(freq=n()) %>% ungroup()
+print(as_tibble(yearly), n = 120)
+
+
+
+```
+
+¿En qué año se hicieron más películas?
+```{r}
+# Get year with most movies produced
+yearly %>% slice_max(freq)
+```
+
+Haga un gráfico de barras
+```{r}
+ggplot(yearly, aes(x=`peliculas$releaseYear`, y= freq, fill= freq)) + geom_col(position ="dodge")
+```
+
+PREGUNTA #4.8
+¿La cantidad de actores influye en los ingresos de las películas?¿Se han hecho películas con más actores en los últimos años?
+```{r}
+x0 <- peliculas$actorsAmount
+y0 <- peliculas$revenue
+# Plot with main and axis titles
+# Change point shape (pch = 21) and remove frame.
+plot(x0, y0, main = " Cantidad de actores vs Ingresos",
+     xlab = "Cantidad de actores", ylab = "Ingresos",
+     pch = 21, frame = FALSE)
+abline(lm(y0 ~ x0, data = peliculas), col = "red")
+correlation5 <- data.frame(budget=c(peliculas$actorsAmount), revenue=c(peliculas$revenue))
+#fit regression model
+correlation6 <- lm(actorsAmount~revenue, data=peliculas)
+summary(correlation6)
+
+actors <- arrange(peliculas, desc(peliculas$actorsAmount))
+head (select(actors, "releaseYear", "actorsAmount"),40)
+```
+
+PREGUNTA #4.11
+¿Cómo se correlacionan los presupuestos con los ingresos? ¿Los altos presupuestos significan altos ingresos? Haga los gráficos que necesite, histograma, diagrama de dispersión
+```{r}
+x <- peliculas$budget
+y <- peliculas$revenue
+# Plot with main and axis titles
+# Change point shape (pch = 21) and remove frame.
+plot(x, y, main = "Presupuesto vs Ingresos",
+     xlab = "Prespuesto", ylab = "Ingresos",
+     pch = 21, frame = FALSE)
+abline(lm(y ~ x, data = peliculas), col = "red")
+correlation <- data.frame(budget=c(peliculas$budget), revenue=c(peliculas$revenue))
+#fit regression model
+correlation2 <- lm(budget~revenue, data=peliculas)
+summary(correlation2)
+```
+
+PREGUNTA #4.14
+¿Cómo se correlacionan las calificaciones con el éxito comercial?
+```{r}
+x1 <- peliculas$popularity
+y1 <- peliculas$revenue
+# Plot with main and axis titles
+# Change point shape (pch = 21) and remove frame.
+plot(x1, y1, main = "Popularidad vs Ingresos",
+     xlab = "Popularidad", ylab = "Ingresos",
+     pch = 21, frame = FALSE)
+abline(lm(y1 ~ x1, data = peliculas), col = "red")
+correlation3 <- data.frame(budget=c(peliculas$popularity ), revenue=c(peliculas$revenue))
+#fit regression model
+correlation4 <- lm(popularity~revenue, data=peliculas)
+summary(correlation4)
+```
 
