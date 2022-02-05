@@ -53,10 +53,21 @@ datafr = pd.read_csv('movies.csv', ',')
 #fin pregunta 4.3
 
 #inicio pregunta 4.6
-#top_20_most_recent = datafr.filter(["genres", "releaseDate"]).sort_values("releaseDate", ascending=False).head(20)
-#print(top_20_most_recent)
-#plt.pie(top_20_most_recent["genres"].value_counts(), labels = top_20_most_recent['releaseDate'])
-#plt.show()
+top_20_most_recent = datafr.filter(["genres", "releaseDate"]).sort_values("releaseDate", ascending=False).head(20)
+print(top_20_most_recent["genres"].value_counts())
+count = {}
+
+for i in top_20_most_recent['genres'].values:
+    if not(isinstance(i, str)):
+        continue
+    genres = i.split('|')
+    for j in genres:
+        if not(j in count.keys()):
+            count[j] = 0
+        count[j] += 1
+
+plt.bar(list(count.keys()), list(count.values()))
+plt.show()
 #fin  pregunta 4.6
 
 #inicio pregunta 4.9
@@ -72,11 +83,11 @@ datafr = pd.read_csv('movies.csv', ',')
 #fin pregunta 4.9
 
 #inicio pregunta 4.12
-revenue_by_month = datafr.filter(["revenue"])
-revenue_by_month["month"] = pd.DatetimeIndex(datafr["releaseDate"]).month
-revenue_by_month = revenue_by_month.groupby("month").revenue.agg(
-    ["sum", "min", "max"]).head(12).sort_values('sum', ascending=False)
-print(revenue_by_month)
+#revenue_by_month = datafr.filter(["revenue"])
+#revenue_by_month["month"] = pd.DatetimeIndex(datafr["releaseDate"]).month
+#revenue_by_month = revenue_by_month.groupby("month").revenue.agg(
+#    ["sum", "min", "max"]).head(12).sort_values('sum', ascending=False)
+#print(revenue_by_month)
 #fin pregunta 4.12
 
 #inicio pregunta 4.14
